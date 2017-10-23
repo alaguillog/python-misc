@@ -1,3 +1,6 @@
+#author: kaywinnet
+#A very very basic imitation of a password manager program
+
 class Password_manager:
 
     def __init__(self, username):
