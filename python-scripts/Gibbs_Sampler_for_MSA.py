@@ -158,9 +158,9 @@ def constructAlignment(sequences, starting_positions):
 ###############################################################################
 
 # 1. Read the sequences from a FASTA file and choose pattern length
-os.chdir("C:/Users/Andrea/Desktop") # path where FASTA is located
+os.chdir("path") # path where FASTA is located
                                     # results will be saved here too
-mysequences = readSequences("myseqs.fasta")
+mysequences = readSequences("file") # FASTA file name
 pattern_length = 8
 
 # FROM HERE IT WILL BE REPEATED IN N ITERATIONS UNTIL NO IMPROVEMENT
