@@ -12,6 +12,7 @@ import random
 import numpy
 import functools
 import os
+import time
 
 ###############################################################################
 #                         DEFINE NECESSARY FUNCTIONS                          #
@@ -118,8 +119,8 @@ def getProbability(prob_matrix, removed_sequence, patternLength):
 def constructAlignment(sequences, starting_positions):
     '''Writes alignment to a file'''
     segment_list = []
-    with open("myseqs_aligned.fasta", 'w') as f:
-        f.write("Gibbs Sampling")
+    with open(output_file, 'w') as f:
+        f.write("Gibbs Sampling: " + str(total_iterations) + " iterations")
         f.write("\n" + "ID" + "\t" + "Position" + "\t" + "Sequence")
         for sequence in sequences:
             begins = starting_positions[sequence]
@@ -157,15 +158,19 @@ def constructAlignment(sequences, starting_positions):
 #                               GIBBS SAMPLING                                #
 ###############################################################################
 
-# 1. Read the sequences from a FASTA file and choose pattern length
+startTime = time.time()
+
+# 1. Read the sequences from a FASTA file and choose parameters
 os.chdir("path") # path where FASTA is located
                                     # results will be saved here too
-mysequences = readSequences("file") # FASTA file name
+mysequences = readSequences("input.fasta")
 pattern_length = 8
+output_file = "output.fasta"
+max_iterations = 20 # with no improvement in probability score
 
 # FROM HERE IT WILL BE REPEATED IN N ITERATIONS UNTIL NO IMPROVEMENT
+total_iterations = 0
 iteration_counter = 0 #increased by one if no improvement in round, reset if so
-max_iterations = 20 # with no improvement in probability score
 starting_positions = {} # Create a dict of sequences and starting positions
 for ID in mysequences:
     starting_positions[ID] = 0 # Fill it with zeroes which we'll change in
@@ -197,8 +202,12 @@ while iteration_counter < 20:
     if result_getProbability[2] >= starting_positions[removed_id]:
         starting_positions[removed_id] = result_getProbability[2]
         iteration_counter = 0 # reset
+        total_iterations = total_iterations + 1
     else: # no improvement
         iteration_counter = iteration_counter + 1
+        total_iterations = total_iterations + 1
 
 # 8. Construct the alignment with the starting_positions dictionary
 constructAlignment(mysequences, starting_positions)
+
+print ('The script took {0} seconds!'.format(time.time() - startTime))
